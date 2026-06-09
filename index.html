@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국민통합위 3건 통합 일정 간트차트</title>
+<style>
+  :root{
+    --gen:#3b82f6;   /* 세대젠더 */
+    --econ:#10b981;  /* 경제양극화 */
+    --listen:#f59e0b;/* 경청소통 */
+    --grid:#e5e7eb;
+    --grid-strong:#cbd5e1;
+    --ink:#1f2937;
+    --muted:#6b7280;
+    --bg:#ffffff;
+    --left-w:300px;
+    --day-w:7px; /* px per day */
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    color:var(--ink);background:#f8fafc;padding:24px;
+  }
+  h1{font-size:20px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:16px;}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;align-items:center;}
+  .legend .item{display:flex;align-items:center;gap:6px;}
+  .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;}
+  .legend .note{color:var(--muted);}
+  .chart-wrap{
+    background:var(--bg);border:1px solid var(--grid);border-radius:10px;
+    overflow-x:auto;box-shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  table.gantt{border-collapse:collapse;width:max-content;min-width:100%;}
+  .gantt th,.gantt td{padding:0;}
+  /* Left header cells */
+  .corner{
+    position:sticky;left:0;z-index:5;background:#f1f5f9;
+    width:var(--left-w);min-width:var(--left-w);
+    border-right:2px solid var(--grid-strong);border-bottom:1px solid var(--grid);
+    font-size:12px;color:var(--muted);text-align:left;padding:8px 12px;
+  }
+  .month-row th{
+    border-bottom:1px solid var(--grid);border-left:1px solid var(--grid-strong);
+    font-size:13px;font-weight:700;color:var(--ink);background:#f8fafc;
+    padding:6px 0;text-align:center;
+  }
+  .week-row th{
+    border-bottom:1px solid var(--grid-strong);border-left:1px solid var(--grid);
+    font-size:10px;color:var(--muted);font-weight:500;background:#fbfcfe;
+    padding:3px 0;text-align:center;white-space:nowrap;
+  }
+  /* Left label cells */
+  td.label{
+    position:sticky;left:0;z-index:4;background:var(--bg);
+    width:var(--left-w);min-width:var(--left-w);
+    border-right:2px solid var(--grid-strong);border-bottom:1px solid var(--grid);
+    padding:7px 12px;font-size:13px;
+  }
+  td.label .ev{font-weight:600;}
+  td.label .meta{color:var(--muted);font-size:11px;margin-top:2px;}
+  .tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+  .tag.fix{background:#dcfce7;color:#166534;}
+  .tag.tent{background:#fef3c7;color:#92400e;}
+  /* group separator row */
+  tr.group td{
+    position:sticky;left:0;z-index:4;
+    background:linear-gradient(90deg,var(--gc),transparent);
+    border-bottom:1px solid var(--grid);border-top:2px solid var(--grid-strong);
+    padding:8px 12px;font-size:14px;font-weight:800;color:#fff;
+  }
+  tr.group td .gname{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25);}
+  tr.group td.timeline-bg{background:#f8fafc;border-left:none;}
+  /* timeline cell */
+  td.timeline{
+    position:relative;border-bottom:1px solid var(--grid);
+    background-image:repeating-linear-gradient(90deg,transparent,transparent calc(var(--day-w)*7 - 1px),var(--grid) calc(var(--day-w)*7 - 1px),var(--grid) calc(var(--day-w)*7));
+  }
+  /* month boundary lines drawn via JS spans */
+  .monthline{position:absolute;top:0;bottom:0;width:1px;background:var(--grid-strong);z-index:1;}
+  .todayline{position:absolute;top:0;bottom:0;width:2px;background:#ef4444;z-index:3;opacity:.7;}
+  .bar{
+    position:absolute;top:50%;transform:translateY(-50%);height:18px;
+    border-radius:9px;z-index:2;display:flex;align-items:center;
+    padding:0 8px;font-size:10px;font-weight:700;color:#fff;white-space:nowrap;
+    box-shadow:0 1px 2px rgba(0,0,0,.2);
+  }
+  .bar.tent{opacity:.92;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.25) 0 4px,transparent 4px 8px);}
+  .bar .lbl{position:absolute;left:calc(100% + 6px);color:var(--ink);font-size:10px;font-weight:600;white-space:nowrap;}
+  .footnote{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;}
+</style>
+</head>
+<body>
+  <h1>국민통합위원회 3개 사업 통합 일정 간트차트</h1>
+  <div class="sub">세대젠더 · 경제양극화 · 경청소통 &nbsp;|&nbsp; 2026년 6월 ~ 10월 &nbsp;|&nbsp; 좌측: 프로젝트/행사 · 우측: 일정</div>
+
+  <div class="legend">
+    <div class="item"><span class="swatch" style="background:var(--gen)"></span>세대젠더</div>
+    <div class="item"><span class="swatch" style="background:var(--econ)"></span>경제양극화</div>
+    <div class="item"><span class="swatch" style="background:var(--listen)"></span>경청소통</div>
+    <div class="item note">&nbsp;|&nbsp; <span class="tag fix">확정/픽스</span> <span class="tag tent">가안(빗금)</span> <span style="color:#ef4444;font-weight:700;">│</span> 오늘(6/9)</div>
+  </div>
+
+  <div class="chart-wrap">
+    <table class="gantt" id="gantt"></table>
+  </div>
+
+  <div class="footnote" id="footnote"></div>
+
+<script>
+const START = new Date(2026,5,1);   // 2026-06-01
+const END   = new Date(2026,9,11);  // 2026-10-11
+const DAY = 7; // px per day, matches --day-w
+const TODAY = new Date(2026,5,9);
+
+const colorVar = {gen:'var(--gen)', econ:'var(--econ)', listen:'var(--listen)'};
+const colorHex = {gen:'#3b82f6', econ:'#10b981', listen:'#f59e0b'};
+
+// project event data
+const projects = [
+  { key:'gen', name:'세대젠더', events:[
+    {ev:'간담회', date:'2026-07-20', region:'부산', status:'tent', note:'8/24 이동·목적 변경 가능'},
+    {ev:'권역별 토론 (경상권)', date:'2026-07-21', region:'부산', status:'fix', note:'부산상공회의소 상의홀'},
+    {ev:'권역별 토론 (수도권)', date:'2026-07-28', region:'수원', status:'tent', note:'수원컨벤션센터/경기도의회'},
+    {ev:'대토론회 1차', date:'2026-08-26', region:'서울', status:'tent', note:'8월 말(8/24~28), 9월 변경 가능'},
+    {ev:'대토론회 2차', date:'2026-09-02', region:'서울', status:'tent', note:'9월 초(8/31~9/4)'},
+  ]},
+  { key:'econ', name:'경제양극화', events:[
+    {ev:'이해관계자 토론', date:'2026-06-30', region:'서울', status:'fix', note:'sba 산학센터 대회의실 · 답사완료'},
+    {ev:'권역별 토론 (충청권)', date:'2026-07-07', region:'대전', status:'fix', note:'대전사회적경제혁신센터 · 답사 6/9'},
+    {ev:'권역별 토론 (전라권)', date:'2026-07-08', region:'광주', status:'fix', note:'광주상공회의소 · 답사 협의중'},
+    {ev:'권역별 토론 (경상권)', date:'2026-07-14', region:'대구', status:'fix', note:'대구시청 산격청사 · 답사 6/10'},
+    {ev:'권역별 토론 (수도권)', date:'2026-07-22', region:'서울', status:'fix', note:'sba 첨단센터 · 답사완료'},
+    {ev:'대토론회 1차', date:'2026-09-03', region:'서울', status:'tent', note:'장소 확인중'},
+    {ev:'대토론회 2차', date:'2026-10-01', region:'서울', status:'tent', note:'장소 확인중'},
+  ]},
+  { key:'listen', name:'경청소통', events:[
+    {ev:'이해관계자 토론', date:'2026-06-01', region:'서울', status:'fix', note:'패스트파이브 시청1호점 · 답사완료'},
+    {ev:'권역별 토론 (수도권)', date:'2026-07-06', region:'서울', status:'fix', note:'국회 3세미나실 · 답사 6/8'},
+    {ev:'권역별 토론 (전라권)', date:'2026-07-21', region:'광주', status:'fix', note:'국립아시아문화전당 · 답사 완료'},
+    {ev:'권역별 토론 (경상권)', date:'2026-08-20', region:'경주', status:'fix', note:'경주화백컨벤션센터 · 답사 6/12'},
+    {ev:'권역별 토론 (충청권)', date:'2026-08-27', region:'세종', status:'fix', note:'정부세종컨벤션센터 · 답사 6/15'},
+    {ev:'대토론회 1차', date:'2026-09-07', region:'서울', status:'tent', note:'9/7 또는 9/14 · 국회 3세미나실'},
+    {ev:'대토론회 2차', date:'2026-09-29', region:'미정', status:'tent', note:'장소 미정'},
+  ]},
+];
+
+const MS = 86400000;
+const daysFromStart = d => Math.round((d - START)/MS);
+const totalDays = daysFromStart(END);
+const totalW = totalDays * DAY;
+function pd(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+const wd = ['일','월','화','수','목','금','토'];
+
+// Build month + week headers
+const months = [];
+let cur = new Date(START);
+while(cur < END){
+  const mStart = new Date(cur.getFullYear(), cur.getMonth(), 1);
+  const next = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+  const s = mStart < START ? START : mStart;
+  const e = next > END ? END : next;
+  months.push({label:(cur.getMonth()+1)+'월', days:daysFromStart(e)-daysFromStart(s)});
+  cur = next;
+}
+
+// Mondays for week ticks
+const weeks=[];
+let w = new Date(START);
+while(w.getDay()!==1) w.setDate(w.getDate()+1); // first Monday
+while(w < END){ weeks.push(new Date(w)); w.setDate(w.getDate()+7); }
+
+const tbl = document.getElementById('gantt');
+
+// month row
+let mRow = '<tr class="month-row"><th class="corner" rowspan="2">프로젝트 / 행사</th>';
+months.forEach(m=>{ mRow += `<th colspan="1" style="min-width:${m.days*DAY}px;width:${m.days*DAY}px">${m.label}</th>`; });
+mRow += '</tr>';
+
+// week row: single cell spanning full width, ticks drawn absolutely
+let wRow = '<tr class="week-row"><th style="position:relative;padding:0;width:'+totalW+'px;min-width:'+totalW+'px">';
+wRow += '<div style="position:relative;height:18px">';
+weeks.forEach(mon=>{
+  const x = daysFromStart(mon)*DAY;
+  wRow += `<span style="position:absolute;left:${x}px;top:2px;font-size:9px;color:#94a3b8;border-left:1px solid var(--grid);padding-left:2px;height:14px">${mon.getMonth()+1}/${mon.getDate()}</span>`;
+});
+wRow += '</div></th></tr>';
+
+tbl.innerHTML = mRow + wRow;
+
+// helper to build a full-width timeline cell content (grid + monthlines + today)
+function timelineDecor(){
+  let html='';
+  let acc=0;
+  months.forEach((m,i)=>{ if(i>0){ html+=`<span class="monthline" style="left:${acc*DAY}px"></span>`;} acc+=m.days; });
+  const tx = daysFromStart(TODAY)*DAY;
+  html+=`<span class="todayline" style="left:${tx}px" title="오늘 2026-06-09"></span>`;
+  return html;
+}
+
+// rows
+projects.forEach(p=>{
+  // group header row
+  const gtr = document.createElement('tr');
+  gtr.className='group';
+  gtr.innerHTML = `<td style="--gc:${colorHex[p.key]}"><span class="gname">${p.name}</span></td>`+
+                  `<td class="timeline-bg" style="position:relative">${timelineDecor()}</td>`;
+  tbl.appendChild(gtr);
+
+  p.events.forEach(e=>{
+    const tr=document.createElement('tr');
+    const tag = e.status==='fix'?'<span class="tag fix">확정</span>':'<span class="tag tent">가안</span>';
+    const dt = pd(e.date);
+    const dlabel = `${dt.getMonth()+1}/${dt.getDate()}(${wd[dt.getDay()]})`;
+    tr.innerHTML =
+      `<td class="label"><div class="ev">${e.ev}${tag}</div>`+
+      `<div class="meta">${dlabel} · ${e.region} · ${e.note}</div></td>`+
+      `<td class="timeline" style="width:${totalW}px;min-width:${totalW}px"></td>`;
+    tbl.appendChild(tr);
+
+    const cell = tr.querySelector('.timeline');
+    cell.innerHTML = timelineDecor();
+    const x = daysFromStart(dt)*DAY;
+    const bar=document.createElement('div');
+    bar.className='bar'+(e.status==='tent'?' tent':'');
+    bar.style.background=colorHex[p.key];
+    // bar width ~ 1 day, but min visible; label outside
+    bar.style.left = x+'px';
+    bar.style.width = '26px';
+    bar.innerHTML = `<span class="lbl">${dlabel} · ${e.region}</span>`;
+    cell.appendChild(bar);
+  });
+});
+
+// footnote
+document.getElementById('footnote').innerHTML =
+  '※ 빨간 세로선 = 오늘(2026-06-09). 빗금 처리된 막대 = 가안(일정·장소 변경 가능). 막대 옆 라벨 = 행사일·지역.<br>'+
+  '※ 세대젠더 간담회는 8/24로 이동될 수 있으며, 대토론회 1·2차는 9월로 변경될 수 있음. 경청소통 대토론회 1차는 9/7 또는 9/14 중 택일 예정.';
+</script>
+</body>
+</html>
