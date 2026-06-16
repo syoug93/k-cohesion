@@ -7,6 +7,7 @@
 <style>
   :root{
     --gen:#3b82f6;   /* 세대젠더 */
+    --gen-detail:#0f766e; /* 세대젠더 세부일정 */
     --econ:#10b981;  /* 경제양극화 */
     --listen:#f59e0b;/* 경청소통 */
     --grid:#e5e7eb;
@@ -63,6 +64,7 @@
   .tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;}
   .tag.fix{background:#dcfce7;color:#166534;}
   .tag.tent{background:#fef3c7;color:#92400e;}
+  .tag.plan{background:#e0f2fe;color:#075985;}
   /* group separator row */
   tr.group td{
     position:sticky;left:0;z-index:4;
@@ -93,13 +95,14 @@
 </head>
 <body>
   <h1>국민통합위원회 3개 사업 통합 일정 간트차트</h1>
-  <div class="sub">세대젠더 · 경제양극화 · 경청소통 &nbsp;|&nbsp; 2026년 6월 ~ 10월 &nbsp;|&nbsp; 좌측: 프로젝트/행사 · 우측: 일정</div>
+  <div class="sub">세대젠더 · 경제양극화 · 경청소통 &nbsp;|&nbsp; 2026년 6월 ~ 12월 &nbsp;|&nbsp; 좌측: 프로젝트/행사 · 우측: 일정</div>
 
   <div class="legend">
     <div class="item"><span class="swatch" style="background:var(--gen)"></span>세대젠더</div>
+    <div class="item"><span class="swatch" style="background:var(--gen-detail)"></span>세대젠더 세부일정</div>
     <div class="item"><span class="swatch" style="background:var(--econ)"></span>경제양극화</div>
     <div class="item"><span class="swatch" style="background:var(--listen)"></span>경청소통</div>
-    <div class="item note">&nbsp;|&nbsp; <span class="tag fix">확정/픽스</span> <span class="tag tent">가안(빗금)</span> <span style="color:#ef4444;font-weight:700;">│</span> 오늘(6/9)</div>
+    <div class="item note" id="todayLegend">&nbsp;|&nbsp; <span class="tag fix">확정/픽스</span> <span class="tag tent">가안(빗금)</span> <span class="tag plan">계획</span> <span style="color:#ef4444;font-weight:700;">│</span> 오늘</div>
   </div>
 
   <div class="chart-wrap">
@@ -110,12 +113,13 @@
 
 <script>
 const START = new Date(2026,5,1);   // 2026-06-01
-const END   = new Date(2026,9,11);  // 2026-10-11
+const END   = new Date(2026,11,16); // 2026-12-16 (12/15까지 표시)
 const DAY = 7; // px per day, matches --day-w
-const TODAY = new Date(2026,5,9);
+const TODAY = new Date();
+TODAY.setHours(0,0,0,0);
 
-const colorVar = {gen:'var(--gen)', econ:'var(--econ)', listen:'var(--listen)'};
-const colorHex = {gen:'#3b82f6', econ:'#10b981', listen:'#f59e0b'};
+const colorVar = {gen:'var(--gen)', genDetail:'var(--gen-detail)', econ:'var(--econ)', listen:'var(--listen)'};
+const colorHex = {gen:'#3b82f6', genDetail:'#0f766e', econ:'#10b981', listen:'#f59e0b'};
 
 // project event data
 const projects = [
@@ -126,6 +130,23 @@ const projects = [
     {ev:'전문가 간담회', date:'2026-08-24', region:'미정', status:'fix', note:''},
     {ev:'대토론회 1차', date:'2026-08-26', region:'서울', status:'tent', note:'8월 말(8/24~28), 9월 변경 가능'},
     {ev:'대토론회 2차', date:'2026-09-02', region:'서울', status:'tent', note:'9월 초(8/31~9/4)'},
+  ]},
+  { key:'genDetail', name:'세대젠더 세부일정', events:[
+    {ev:'사업 추진계획·전체 일정 수립', start:'2026-06-01', end:'2026-06-30', region:'계획', status:'plan', note:'과업수행계획서·전담조직·일정'},
+    {ev:'홍보 및 웹포스터 제작', start:'2026-06-01', end:'2026-12-15', region:'홍보', status:'plan', note:'웹포스터·유튜브·영상'},
+    {ev:'공론장 조성', start:'2026-06-01', end:'2026-09-30', region:'운영', status:'plan', note:'대학 중심·답사·세팅'},
+    {ev:'의제 프레임워크·발굴·선정', start:'2026-06-01', end:'2026-06-30', region:'의제', status:'plan', note:'예비 의제 후보·의견수렴·확정'},
+    {ev:'전문가 자문·간담회 준비', start:'2026-06-01', end:'2026-08-24', region:'자문', status:'plan', note:'의제 구체화·쟁점 검증'},
+    {ev:'참여단 모집·구성·관리', start:'2026-06-01', end:'2026-08-31', region:'모집', status:'plan', note:'4세대 균형·층화 공개모집'},
+    {ev:'온라인 운영·사전교육', start:'2026-06-01', end:'2026-12-15', region:'교육', status:'plan', note:'통합위 게시·줌 사전교육·학습 점검'},
+    {ev:'숙의 운영 설계·타임테이블', start:'2026-06-01', end:'2026-09-30', region:'설계', status:'plan', note:'2세션 설계·진행 큐시트'},
+    {ev:'조사항목 설계', start:'2026-06-01', end:'2026-09-30', region:'조사', status:'plan', note:'사전·사후 설문·의제별 문항'},
+    {ev:'운영 지원 체계·전문인력', start:'2026-06-01', end:'2026-09-30', region:'운영', status:'plan', note:'플랫폼·무선투표·AI·퍼실리테이터'},
+    {ev:'권역 토론회 개최·운영', start:'2026-07-01', end:'2026-07-31', region:'부산·수원', status:'plan', note:'경상 7/21 · 수도 7/28'},
+    {ev:'최종 토론회 개최·운영', start:'2026-09-01', end:'2026-09-14', region:'서울', status:'plan', note:'1차 9월 1주 · 2차 9월 2주'},
+    {ev:'결과 분석 및 정책권고', start:'2026-07-01', end:'2026-12-15', region:'분석', status:'plan', note:'Pre-Post·토픽모델링·권고안'},
+    {ev:'백서·결과보고서', start:'2026-11-01', end:'2026-12-15', region:'보고', status:'plan', note:'백서·영상물·인포그래픽'},
+    {ev:'결과 보고·국민보고대회 지원', start:'2026-09-01', end:'2026-12-15', region:'보고', status:'plan', note:'결과보고·대통령 주재 보고 지원'},
   ]},
   { key:'econ', name:'경제양극화', events:[
     {ev:'이해관계자 토론', date:'2026-06-30', region:'서울', status:'fix', note:'sba 산학센터 대회의실 · 답사완료'},
@@ -153,6 +174,11 @@ const totalDays = daysFromStart(END);
 const totalW = totalDays * DAY;
 function pd(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
 const wd = ['일','월','화','수','목','금','토'];
+function dateLabel(dt){return `${dt.getMonth()+1}/${dt.getDate()}(${wd[dt.getDay()]})`;}
+function dateRangeLabel(start, end){
+  if(start.getTime()===end.getTime()) return dateLabel(start);
+  return `${start.getMonth()+1}/${start.getDate()}~${end.getMonth()+1}/${end.getDate()}`;
+}
 
 // Build month + week headers
 const months = [];
@@ -195,8 +221,10 @@ function timelineDecor(){
   let html='';
   let acc=0;
   months.forEach((m,i)=>{ if(i>0){ html+=`<span class="monthline" style="left:${acc*DAY}px"></span>`;} acc+=m.days; });
-  const tx = daysFromStart(TODAY)*DAY;
-  html+=`<span class="todayline" style="left:${tx}px" title="오늘 2026-06-09"></span>`;
+  if(TODAY >= START && TODAY < END){
+    const tx = daysFromStart(TODAY)*DAY;
+    html+=`<span class="todayline" style="left:${tx}px" title="오늘 ${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}"></span>`;
+  }
   return html;
 }
 
@@ -211,33 +239,39 @@ projects.forEach(p=>{
 
   p.events.forEach(e=>{
     const tr=document.createElement('tr');
-    const tag = e.status==='fix'?'<span class="tag fix">확정</span>':'<span class="tag tent">가안</span>';
-    const dt = pd(e.date);
-    const dlabel = `${dt.getMonth()+1}/${dt.getDate()}(${wd[dt.getDay()]})`;
+    const tagLabel = e.status==='fix' ? '확정' : e.status==='tent' ? '가안' : '계획';
+    const tag = `<span class="tag ${e.status}">${tagLabel}</span>`;
+    const start = pd(e.start || e.date);
+    const end = pd(e.end || e.date);
+    const dlabel = dateRangeLabel(start, end);
+    const meta = [dlabel, e.region, e.note].filter(Boolean).join(' · ');
     tr.innerHTML =
       `<td class="label"><div class="ev">${e.ev}${tag}</div>`+
-      `<div class="meta">${dlabel} · ${e.region} · ${e.note}</div></td>`+
+      `<div class="meta">${meta}</div></td>`+
       `<td class="timeline" style="width:${totalW}px;min-width:${totalW}px"></td>`;
     tbl.appendChild(tr);
 
     const cell = tr.querySelector('.timeline');
     cell.innerHTML = timelineDecor();
-    const x = daysFromStart(dt)*DAY;
+    const x = daysFromStart(start)*DAY;
+    const barDays = Math.max(1, daysFromStart(end) - daysFromStart(start) + 1);
     const bar=document.createElement('div');
     bar.className='bar'+(e.status==='tent'?' tent':'');
     bar.style.background=colorHex[p.key];
-    // bar width ~ 1 day, but min visible; label outside
     bar.style.left = x+'px';
-    bar.style.width = '26px';
+    bar.style.width = Math.max(26, barDays*DAY)+'px';
     bar.innerHTML = `<span class="lbl">${dlabel} · ${e.region}</span>`;
     cell.appendChild(bar);
   });
 });
 
 // footnote
+const todayText = `${TODAY.getMonth()+1}/${TODAY.getDate()}`;
+document.getElementById('todayLegend').innerHTML =
+  `&nbsp;|&nbsp; <span class="tag fix">확정/픽스</span> <span class="tag tent">가안(빗금)</span> <span class="tag plan">계획</span> <span style="color:#ef4444;font-weight:700;">│</span> 오늘(${todayText})`;
 document.getElementById('footnote').innerHTML =
-  '※ 빨간 세로선 = 오늘(2026-06-09). 빗금 처리된 막대 = 가안(일정·장소 변경 가능). 막대 옆 라벨 = 행사일·지역.<br>'+
-  '※ 세대젠더 간담회는 8/24로 이동될 수 있으며, 대토론회 1·2차는 9월로 변경될 수 있음. 경청소통 대토론회 1차는 9/7 또는 9/14 중 택일 예정.';
+  `※ 빨간 세로선 = 오늘(${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}) 자동 표시. 빗금 처리된 막대 = 가안(일정·장소 변경 가능). 막대 옆 라벨 = 행사일·지역.<br>`+
+  '※ 세대젠더 세부일정은 첨부 실행계획서 초안(0.9)의 세부 추진계획 요약 및 WBS를 반영했습니다. 대토론회 1·2차는 9월로 변경될 수 있음. 경청소통 대토론회 1차는 9/7 또는 9/14 중 택일 예정.';
 </script>
 </body>
 </html>
