@@ -263,7 +263,8 @@ const genderWbs = [
   ]},
   { key:'genDetail', name:'③ 공론장·자료집·큐시트', events:[
     {ev:'공론장 대관 협의·계약', start:'2026-06-02', end:'2026-06-30', region:'부산·수원', status:'plan', note:'D-49~'},
-    {ev:'경상권 답사·실측', start:'2026-06-30', end:'2026-06-30', region:'부산', status:'plan', note:'D-21'},
+    {ev:'수도권(수원) 답사·실측', start:'2026-06-22', end:'2026-06-22', region:'수원', status:'fix', note:'09:00-12:30 · Google Calendar'},
+    {ev:'경상권(부산) 답사·실측', start:'2026-06-23', end:'2026-06-23', region:'부산', status:'fix', note:'종일 · Google Calendar'},
     {ev:'경상권 플로어플랜·동선 계획', start:'2026-07-07', end:'2026-07-07', region:'부산', status:'plan', note:'D-14'},
     {ev:'인터넷·무대·마이크·영상음향 설계', start:'2026-07-07', end:'2026-07-07', region:'기술', status:'plan', note:'D-14'},
     {ev:'원탁·의자·영상중계 섭외', start:'2026-06-30', end:'2026-07-07', region:'외부', status:'plan', note:'비과업 비용'},
@@ -293,7 +294,6 @@ const genderWbs = [
     {ev:'경상권 결과 분석·인포그래픽', start:'2026-07-22', end:'2026-07-24', region:'분석', status:'plan', note:'D+1~D+3'},
   ]},
   { key:'genDetail', name:'⑥ 수도권 권역토론 실행', events:[
-    {ev:'수도권 답사·실측', start:'2026-07-07', end:'2026-07-07', region:'수원', status:'plan', note:'수도권 +7일'},
     {ev:'수도권 플로어플랜·안전·기술 설계', start:'2026-07-14', end:'2026-07-14', region:'수원', status:'plan', note:'수도권 D-14'},
     {ev:'수도권 모집·사전조사·층화 선정', start:'2026-07-07', end:'2026-07-23', region:'수원', status:'plan', note:'수도권 D-21~D-5'},
     {ev:'수도권 자료집 인쇄 마감', start:'2026-07-25', end:'2026-07-25', region:'수원', status:'plan', note:'수도권 D-3'},
@@ -411,7 +411,7 @@ document.getElementById('overviewFootnote').innerHTML =
   `※ 빨간 세로선 = 오늘(${iso(TODAY)}) 자동 표시. 빗금 처리된 막대 = 가안(일정·장소 변경 가능).<br>`+
   '※ 통합 일정은 주요 행사 중심입니다. 세대젠더 세세부 업무는 상단의 「세대젠더 상세 WBS」 챕터에서 확인합니다.';
 document.getElementById('genderFootnote').innerHTML =
-  '※ 세대젠더 상세 WBS는 첨부 실행계획서 초안(0.9)의 To-Do 리스트와 WBS를 경상권 7/21 기준 D-day로 환산해 반영했습니다. 수도권 일정은 문서 기준에 따라 경상권 대비 +7일로 잡았습니다.';
+  '※ 세대젠더 상세 WBS는 첨부 실행계획서 초안(0.9)의 To-Do 리스트와 WBS를 경상권 7/21 기준 D-day로 환산해 반영했습니다. 답사 일정은 Google Calendar의 세젠 답사 일정(6/22 수원, 6/23 부산)을 우선 반영했습니다.';
 
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
