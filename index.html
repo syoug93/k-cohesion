@@ -6,147 +6,222 @@
 <title>국민통합위 3건 통합 일정 간트차트</title>
 <style>
   :root{
-    --gen:#3b82f6;   /* 세대젠더 */
-    --gen-detail:#0f766e; /* 세대젠더 세부일정 */
-    --econ:#10b981;  /* 경제양극화 */
-    --listen:#f59e0b;/* 경청소통 */
+    --gen:#3b82f6;
+    --gen-detail:#0f766e;
+    --econ:#10b981;
+    --listen:#f59e0b;
     --grid:#e5e7eb;
     --grid-strong:#cbd5e1;
     --ink:#1f2937;
     --muted:#6b7280;
     --bg:#ffffff;
-    --left-w:300px;
-    --day-w:7px; /* px per day */
+    --left-w:320px;
+    --day-w:7px;
   }
   *{box-sizing:border-box;}
   body{
-    margin:0;font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
-    color:var(--ink);background:#f8fafc;padding:24px;
+    margin:0;
+    padding:24px;
+    background:#f8fafc;
+    color:var(--ink);
+    font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
   }
   h1{font-size:20px;margin:0 0 4px;}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:16px;}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px;}
+  .tabs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:0 0 14px;
+  }
+  .tab{
+    border:1px solid var(--grid-strong);
+    background:#fff;
+    color:var(--ink);
+    border-radius:7px;
+    padding:7px 12px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .tab.active{
+    background:#111827;
+    border-color:#111827;
+    color:#fff;
+  }
+  .panel{display:none;}
+  .panel.active{display:block;}
   .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;align-items:center;}
   .legend .item{display:flex;align-items:center;gap:6px;}
-  .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;}
   .legend .note{color:var(--muted);}
+  .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;}
   .chart-wrap{
-    background:var(--bg);border:1px solid var(--grid);border-radius:10px;
-    overflow-x:auto;box-shadow:0 1px 3px rgba(0,0,0,.06);
+    background:var(--bg);
+    border:1px solid var(--grid);
+    border-radius:8px;
+    overflow-x:auto;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
   }
   table.gantt{border-collapse:collapse;width:max-content;min-width:100%;}
   .gantt th,.gantt td{padding:0;}
-  /* Left header cells */
   .corner{
-    position:sticky;left:0;z-index:5;background:#f1f5f9;
-    width:var(--left-w);min-width:var(--left-w);
-    border-right:2px solid var(--grid-strong);border-bottom:1px solid var(--grid);
-    font-size:12px;color:var(--muted);text-align:left;padding:8px 12px;
+    position:sticky;
+    left:0;
+    z-index:5;
+    width:var(--left-w);
+    min-width:var(--left-w);
+    padding:8px 12px;
+    background:#f1f5f9;
+    border-right:2px solid var(--grid-strong);
+    border-bottom:1px solid var(--grid);
+    color:var(--muted);
+    font-size:12px;
+    text-align:left;
   }
   .month-row th{
-    border-bottom:1px solid var(--grid);border-left:1px solid var(--grid-strong);
-    font-size:13px;font-weight:700;color:var(--ink);background:#f8fafc;
-    padding:6px 0;text-align:center;
+    padding:6px 0;
+    border-bottom:1px solid var(--grid);
+    border-left:1px solid var(--grid-strong);
+    background:#f8fafc;
+    color:var(--ink);
+    font-size:13px;
+    font-weight:800;
+    text-align:center;
   }
   .week-row th{
-    border-bottom:1px solid var(--grid-strong);border-left:1px solid var(--grid);
-    font-size:10px;color:var(--muted);font-weight:500;background:#fbfcfe;
-    padding:3px 0;text-align:center;white-space:nowrap;
+    border-bottom:1px solid var(--grid-strong);
+    border-left:1px solid var(--grid);
+    background:#fbfcfe;
   }
-  /* Left label cells */
   td.label{
-    position:sticky;left:0;z-index:4;background:var(--bg);
-    width:var(--left-w);min-width:var(--left-w);
-    border-right:2px solid var(--grid-strong);border-bottom:1px solid var(--grid);
-    padding:7px 12px;font-size:13px;
+    position:sticky;
+    left:0;
+    z-index:4;
+    width:var(--left-w);
+    min-width:var(--left-w);
+    padding:7px 12px;
+    background:var(--bg);
+    border-right:2px solid var(--grid-strong);
+    border-bottom:1px solid var(--grid);
+    font-size:13px;
   }
-  td.label .ev{font-weight:600;}
-  td.label .meta{color:var(--muted);font-size:11px;margin-top:2px;}
+  td.label .ev{font-weight:700;}
+  td.label .meta{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.35;}
   .tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;}
   .tag.fix{background:#dcfce7;color:#166534;}
   .tag.tent{background:#fef3c7;color:#92400e;}
   .tag.plan{background:#e0f2fe;color:#075985;}
-  /* group separator row */
+  .tag.done{background:#e5e7eb;color:#374151;}
   tr.group td{
-    position:sticky;left:0;z-index:4;
+    position:sticky;
+    left:0;
+    z-index:4;
+    padding:8px 12px;
     background:linear-gradient(90deg,var(--gc),transparent);
-    border-bottom:1px solid var(--grid);border-top:2px solid var(--grid-strong);
-    padding:8px 12px;font-size:14px;font-weight:800;color:#fff;
+    border-top:2px solid var(--grid-strong);
+    border-bottom:1px solid var(--grid);
+    color:#fff;
+    font-size:14px;
+    font-weight:800;
   }
   tr.group td .gname{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25);}
   tr.group td.timeline-bg{background:#f8fafc;border-left:none;}
-  /* timeline cell */
   td.timeline{
-    position:relative;border-bottom:1px solid var(--grid);
+    position:relative;
+    border-bottom:1px solid var(--grid);
     background-image:repeating-linear-gradient(90deg,transparent,transparent calc(var(--day-w)*7 - 1px),var(--grid) calc(var(--day-w)*7 - 1px),var(--grid) calc(var(--day-w)*7));
   }
-  /* month boundary lines drawn via JS spans */
   .monthline{position:absolute;top:0;bottom:0;width:1px;background:var(--grid-strong);z-index:1;}
-  .todayline{position:absolute;top:0;bottom:0;width:2px;background:#ef4444;z-index:3;opacity:.7;}
+  .todayline{position:absolute;top:0;bottom:0;width:2px;background:#ef4444;z-index:3;opacity:.75;}
   .bar{
-    position:absolute;top:50%;transform:translateY(-50%);height:18px;
-    border-radius:9px;z-index:2;display:flex;align-items:center;
-    padding:0 8px;font-size:10px;font-weight:700;color:#fff;white-space:nowrap;
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    height:18px;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    border-radius:9px;
+    padding:0 8px;
+    color:#fff;
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap;
     box-shadow:0 1px 2px rgba(0,0,0,.2);
   }
   .bar.tent{opacity:.92;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.25) 0 4px,transparent 4px 8px);}
-  .bar .lbl{position:absolute;left:calc(100% + 6px);color:var(--ink);font-size:10px;font-weight:600;white-space:nowrap;}
+  .bar.done{opacity:.62;}
+  .bar .lbl{position:absolute;left:calc(100% + 6px);color:var(--ink);font-size:10px;font-weight:700;white-space:nowrap;}
   .footnote{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;}
 </style>
 </head>
 <body>
   <h1>국민통합위원회 3개 사업 통합 일정 간트차트</h1>
-  <div class="sub">세대젠더 · 경제양극화 · 경청소통 &nbsp;|&nbsp; 2026년 6월 ~ 12월 &nbsp;|&nbsp; 좌측: 프로젝트/행사 · 우측: 일정</div>
+  <div class="sub">2026년 6월 ~ 12월 · 통합 일정과 세대젠더 상세 WBS를 챕터로 구분</div>
 
-  <div class="legend">
-    <div class="item"><span class="swatch" style="background:var(--gen)"></span>세대젠더</div>
-    <div class="item"><span class="swatch" style="background:var(--gen-detail)"></span>세대젠더 세부일정</div>
-    <div class="item"><span class="swatch" style="background:var(--econ)"></span>경제양극화</div>
-    <div class="item"><span class="swatch" style="background:var(--listen)"></span>경청소통</div>
-    <div class="item note" id="todayLegend">&nbsp;|&nbsp; <span class="tag fix">확정/픽스</span> <span class="tag tent">가안(빗금)</span> <span class="tag plan">계획</span> <span style="color:#ef4444;font-weight:700;">│</span> 오늘</div>
+  <div class="tabs" role="tablist">
+    <button class="tab active" type="button" data-panel="overviewPanel">통합 일정</button>
+    <button class="tab" type="button" data-panel="genderPanel">세대젠더 상세 WBS</button>
   </div>
 
-  <div class="chart-wrap">
-    <table class="gantt" id="gantt"></table>
-  </div>
+  <section class="panel active" id="overviewPanel">
+    <div class="legend">
+      <div class="item"><span class="swatch" style="background:var(--gen)"></span>세대젠더</div>
+      <div class="item"><span class="swatch" style="background:var(--econ)"></span>경제양극화</div>
+      <div class="item"><span class="swatch" style="background:var(--listen)"></span>경청소통</div>
+      <div class="item note" id="overviewTodayLegend"></div>
+    </div>
+    <div class="chart-wrap">
+      <table class="gantt" id="overviewGantt"></table>
+    </div>
+    <div class="footnote" id="overviewFootnote"></div>
+  </section>
 
-  <div class="footnote" id="footnote"></div>
+  <section class="panel" id="genderPanel">
+    <div class="legend">
+      <div class="item"><span class="swatch" style="background:var(--gen-detail)"></span>세대젠더 세세부 일정</div>
+      <div class="item note" id="genderTodayLegend"></div>
+    </div>
+    <div class="chart-wrap">
+      <table class="gantt" id="genderGantt"></table>
+    </div>
+    <div class="footnote" id="genderFootnote"></div>
+  </section>
 
 <script>
-const START = new Date(2026,5,1);   // 2026-06-01
-const END   = new Date(2026,11,16); // 2026-12-16 (12/15까지 표시)
-const DAY = 7; // px per day, matches --day-w
+const START = new Date(2026,5,1);
+const END = new Date(2026,11,16);
+const DAY = 7;
 const TODAY = new Date();
 TODAY.setHours(0,0,0,0);
 
-const colorVar = {gen:'var(--gen)', genDetail:'var(--gen-detail)', econ:'var(--econ)', listen:'var(--listen)'};
-const colorHex = {gen:'#3b82f6', genDetail:'#0f766e', econ:'#10b981', listen:'#f59e0b'};
+const colorHex = {
+  gen:'#3b82f6',
+  genDetail:'#0f766e',
+  econ:'#10b981',
+  listen:'#f59e0b',
+  chapter:'#475569'
+};
 
-// project event data
-const projects = [
+const MS = 86400000;
+const wd = ['일','월','화','수','목','금','토'];
+const daysFromStart = d => Math.round((d - START)/MS);
+const pd = s => {
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y,m-1,d);
+};
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const dateLabel = d => `${d.getMonth()+1}/${d.getDate()}(${wd[d.getDay()]})`;
+const rangeLabel = (s,e) => s.getTime()===e.getTime() ? dateLabel(s) : `${s.getMonth()+1}/${s.getDate()}~${e.getMonth()+1}/${e.getDate()}`;
+
+const overviewProjects = [
   { key:'gen', name:'세대젠더', events:[
     {ev:'분과회의', date:'2026-06-23', region:'미정', status:'fix', note:'15:00'},
     {ev:'권역별 토론 (경상권)', date:'2026-07-21', region:'부산', status:'fix', note:'부산상공회의소 상의홀'},
     {ev:'권역별 토론 (수도권)', date:'2026-07-28', region:'수원', status:'tent', note:'수원컨벤션센터/경기도의회'},
-    {ev:'전문가 간담회', date:'2026-08-24', region:'미정', status:'fix', note:''},
-    {ev:'대토론회 1차', date:'2026-08-26', region:'서울', status:'tent', note:'8월 말(8/24~28), 9월 변경 가능'},
-    {ev:'대토론회 2차', date:'2026-09-02', region:'서울', status:'tent', note:'9월 초(8/31~9/4)'},
-  ]},
-  { key:'genDetail', name:'세대젠더 세부일정', events:[
-    {ev:'사업 추진계획·전체 일정 수립', start:'2026-06-01', end:'2026-06-30', region:'계획', status:'plan', note:'과업수행계획서·전담조직·일정'},
-    {ev:'홍보 및 웹포스터 제작', start:'2026-06-01', end:'2026-12-15', region:'홍보', status:'plan', note:'웹포스터·유튜브·영상'},
-    {ev:'공론장 조성', start:'2026-06-01', end:'2026-09-30', region:'운영', status:'plan', note:'대학 중심·답사·세팅'},
-    {ev:'의제 프레임워크·발굴·선정', start:'2026-06-01', end:'2026-06-30', region:'의제', status:'plan', note:'예비 의제 후보·의견수렴·확정'},
-    {ev:'전문가 자문·간담회 준비', start:'2026-06-01', end:'2026-08-24', region:'자문', status:'plan', note:'의제 구체화·쟁점 검증'},
-    {ev:'참여단 모집·구성·관리', start:'2026-06-01', end:'2026-08-31', region:'모집', status:'plan', note:'4세대 균형·층화 공개모집'},
-    {ev:'온라인 운영·사전교육', start:'2026-06-01', end:'2026-12-15', region:'교육', status:'plan', note:'통합위 게시·줌 사전교육·학습 점검'},
-    {ev:'숙의 운영 설계·타임테이블', start:'2026-06-01', end:'2026-09-30', region:'설계', status:'plan', note:'2세션 설계·진행 큐시트'},
-    {ev:'조사항목 설계', start:'2026-06-01', end:'2026-09-30', region:'조사', status:'plan', note:'사전·사후 설문·의제별 문항'},
-    {ev:'운영 지원 체계·전문인력', start:'2026-06-01', end:'2026-09-30', region:'운영', status:'plan', note:'플랫폼·무선투표·AI·퍼실리테이터'},
-    {ev:'권역 토론회 개최·운영', start:'2026-07-01', end:'2026-07-31', region:'부산·수원', status:'plan', note:'경상 7/21 · 수도 7/28'},
-    {ev:'최종 토론회 개최·운영', start:'2026-09-01', end:'2026-09-14', region:'서울', status:'plan', note:'1차 9월 1주 · 2차 9월 2주'},
-    {ev:'결과 분석 및 정책권고', start:'2026-07-01', end:'2026-12-15', region:'분석', status:'plan', note:'Pre-Post·토픽모델링·권고안'},
-    {ev:'백서·결과보고서', start:'2026-11-01', end:'2026-12-15', region:'보고', status:'plan', note:'백서·영상물·인포그래픽'},
-    {ev:'결과 보고·국민보고대회 지원', start:'2026-09-01', end:'2026-12-15', region:'보고', status:'plan', note:'결과보고·대통령 주재 보고 지원'},
+    {ev:'전문가 간담회', date:'2026-08-24', region:'서울(안)', status:'fix', note:'의제 구체화·쟁점 검증·정책 자문'},
+    {ev:'대토론회 1차', start:'2026-09-01', end:'2026-09-07', region:'서울', status:'tent', note:'9월 1주'},
+    {ev:'대토론회 2차', start:'2026-09-08', end:'2026-09-14', region:'서울', status:'tent', note:'9월 2주'},
   ]},
   { key:'econ', name:'경제양극화', events:[
     {ev:'이해관계자 토론', date:'2026-06-30', region:'서울', status:'fix', note:'sba 산학센터 대회의실 · 답사완료'},
@@ -168,110 +243,184 @@ const projects = [
   ]},
 ];
 
-const MS = 86400000;
-const daysFromStart = d => Math.round((d - START)/MS);
-const totalDays = daysFromStart(END);
-const totalW = totalDays * DAY;
-function pd(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
-const wd = ['일','월','화','수','목','금','토'];
-function dateLabel(dt){return `${dt.getMonth()+1}/${dt.getDate()}(${wd[dt.getDay()]})`;}
-function dateRangeLabel(start, end){
-  if(start.getTime()===end.getTime()) return dateLabel(start);
-  return `${start.getMonth()+1}/${start.getDate()}~${end.getMonth()+1}/${end.getDate()}`;
+const genderWbs = [
+  { key:'chapter', name:'① 상시·착수·관리', events:[
+    {ev:'발주처 단일 창구·flow 방 관리', start:'2026-06-01', end:'2026-12-15', region:'상시', status:'plan', note:'주간·월간 보고'},
+    {ev:'회의록·녹취·전사 업로드', start:'2026-06-01', end:'2026-12-15', region:'상시', status:'plan', note:'분과·협의·전문가 회의 기록'},
+    {ev:'자료 아카이빙·버전 관리', start:'2026-06-01', end:'2026-12-15', region:'상시', status:'plan', note:'drive↔flow'},
+    {ev:'실행계획서 협의·확정', start:'2026-06-01', end:'2026-06-30', region:'착수', status:'plan', note:'과업수행계획 승인'},
+  ]},
+  { key:'genDetail', name:'② 의제 발굴·조사 설계', events:[
+    {ev:'세대 의제 프레임워크·예비 5후보', start:'2026-06-02', end:'2026-06-30', region:'의제', status:'plan', note:'D-49~'},
+    {ev:'기초·문헌조사', start:'2026-06-02', end:'2026-06-30', region:'조사', status:'plan', note:'언론 279건·국민통합·전문가'},
+    {ev:'이해관계자 인터뷰이 리크루팅', start:'2026-06-09', end:'2026-06-30', region:'FGD', status:'plan', note:'D-42~'},
+    {ev:'FGD 또는 사전 개방형 의견수렴', start:'2026-06-21', end:'2026-07-24', region:'FGD', status:'plan', note:'D-30~D+3'},
+    {ev:'8단계·2세션 퍼실리테이션 설계', start:'2026-06-16', end:'2026-07-14', region:'숙의', status:'plan', note:'D-35~D-7'},
+    {ev:'무선투표·실시간 분석·AI 플랫폼 구축', start:'2026-06-23', end:'2026-07-20', region:'기술', status:'plan', note:'D-28~'},
+    {ev:'사전 인식조사문 설계·코딩', start:'2026-06-23', end:'2026-06-30', region:'조사', status:'plan', note:'D-28~D-21'},
+    {ev:'신청폼·통계시트 제작', start:'2026-06-30', end:'2026-06-30', region:'모집', status:'plan', note:'D-21'},
+    {ev:'사전조사 수집·토픽모델링', start:'2026-07-07', end:'2026-07-18', region:'분석', status:'plan', note:'D-14~D-3'},
+  ]},
+  { key:'genDetail', name:'③ 공론장·자료집·큐시트', events:[
+    {ev:'공론장 대관 협의·계약', start:'2026-06-02', end:'2026-06-30', region:'부산·수원', status:'plan', note:'D-49~'},
+    {ev:'경상권 답사·실측', start:'2026-06-30', end:'2026-06-30', region:'부산', status:'plan', note:'D-21'},
+    {ev:'경상권 플로어플랜·동선 계획', start:'2026-07-07', end:'2026-07-07', region:'부산', status:'plan', note:'D-14'},
+    {ev:'인터넷·무대·마이크·영상음향 설계', start:'2026-07-07', end:'2026-07-07', region:'기술', status:'plan', note:'D-14'},
+    {ev:'원탁·의자·영상중계 섭외', start:'2026-06-30', end:'2026-07-07', region:'외부', status:'plan', note:'비과업 비용'},
+    {ev:'안전 점검·행사보험 가입', start:'2026-07-07', end:'2026-07-07', region:'안전', status:'plan', note:'D-14'},
+    {ev:'타임테이블 확정', start:'2026-06-30', end:'2026-06-30', region:'운영', status:'plan', note:'3시간·2세션'},
+    {ev:'큐시트 3종 작성', start:'2026-07-07', end:'2026-07-14', region:'운영', status:'plan', note:'내부·퍼실·공유'},
+    {ev:'자료집 페이지 구성', start:'2026-06-23', end:'2026-06-23', region:'자료집', status:'plan', note:'D-28'},
+    {ev:'자료집 디자인', start:'2026-07-07', end:'2026-07-07', region:'디자인', status:'plan', note:'D-14'},
+    {ev:'자료집 인쇄 마감', start:'2026-07-18', end:'2026-07-18', region:'인쇄', status:'plan', note:'D-3'},
+    {ev:'모바일 자료집 문자 발송', start:'2026-07-16', end:'2026-07-16', region:'자료집', status:'plan', note:'D-5'},
+  ]},
+  { key:'genDetail', name:'④ 홍보·모집·스탭 준비', events:[
+    {ev:'웹자보·웹포스터 제작', start:'2026-06-30', end:'2026-06-30', region:'홍보', status:'plan', note:'경상·수도 톤 통일'},
+    {ev:'보도자료·취재요청', start:'2026-07-07', end:'2026-07-07', region:'홍보', status:'plan', note:'D-14'},
+    {ev:'일일 등록 확인·카카오 채널 대응', start:'2026-06-30', end:'2026-07-20', region:'모집', status:'plan', note:'D-21~D-1'},
+    {ev:'참가신청자 사전조사·층화 선정', start:'2026-06-30', end:'2026-07-16', region:'모집', status:'plan', note:'D-21~D-5'},
+    {ev:'R.S.V.P 전날 확인', start:'2026-07-20', end:'2026-07-20', region:'모집', status:'plan', note:'D-1'},
+    {ev:'스탭 역할 정의', start:'2026-06-30', end:'2026-06-30', region:'운영', status:'plan', note:'기획·분석·기술·리셉션·퍼실'},
+    {ev:'퍼실·스탭 OT·모의토론', start:'2026-07-11', end:'2026-07-18', region:'교육', status:'plan', note:'D-10~D-3'},
+  ]},
+  { key:'genDetail', name:'⑤ 경상권 권역토론 실행', events:[
+    {ev:'패킹리스트 작성', start:'2026-07-19', end:'2026-07-19', region:'부산', status:'plan', note:'D-2'},
+    {ev:'패킹·설치·플로어 조성', start:'2026-07-20', end:'2026-07-20', region:'부산', status:'plan', note:'D-1'},
+    {ev:'LED·영상·음향·무선투표 설치', start:'2026-07-20', end:'2026-07-20', region:'부산', status:'plan', note:'D-1'},
+    {ev:'파트·기술·드레스 리허설', start:'2026-07-20', end:'2026-07-20', region:'부산', status:'plan', note:'D-1'},
+    {ev:'경상권 권역토론 개최', start:'2026-07-21', end:'2026-07-21', region:'부산', status:'fix', note:'50~100명'},
+    {ev:'경상권 결과 분석·인포그래픽', start:'2026-07-22', end:'2026-07-24', region:'분석', status:'plan', note:'D+1~D+3'},
+  ]},
+  { key:'genDetail', name:'⑥ 수도권 권역토론 실행', events:[
+    {ev:'수도권 답사·실측', start:'2026-07-07', end:'2026-07-07', region:'수원', status:'plan', note:'수도권 +7일'},
+    {ev:'수도권 플로어플랜·안전·기술 설계', start:'2026-07-14', end:'2026-07-14', region:'수원', status:'plan', note:'수도권 D-14'},
+    {ev:'수도권 모집·사전조사·층화 선정', start:'2026-07-07', end:'2026-07-23', region:'수원', status:'plan', note:'수도권 D-21~D-5'},
+    {ev:'수도권 자료집 인쇄 마감', start:'2026-07-25', end:'2026-07-25', region:'수원', status:'plan', note:'수도권 D-3'},
+    {ev:'수도권 설치·리허설', start:'2026-07-27', end:'2026-07-27', region:'수원', status:'plan', note:'수도권 D-1'},
+    {ev:'수도권 권역토론 개최', start:'2026-07-28', end:'2026-07-28', region:'수원', status:'tent', note:'50~100명'},
+    {ev:'수도권 결과 분석·인포그래픽', start:'2026-07-29', end:'2026-07-31', region:'분석', status:'plan', note:'D+1~D+3'},
+  ]},
+  { key:'genDetail', name:'⑦ 전문가 간담회·최종 토론', events:[
+    {ev:'권역 결과 종합·전문가 안건 정리', start:'2026-08-01', end:'2026-08-21', region:'자문', status:'plan', note:'권역 쟁점 종합'},
+    {ev:'전문가 간담회', start:'2026-08-24', end:'2026-08-24', region:'서울(안)', status:'fix', note:'쟁점·정책 자문'},
+    {ev:'최종 토론 프레임·층화추출 확정', start:'2026-08-25', end:'2026-08-31', region:'최종', status:'plan', note:'전문가 간담회 후속'},
+    {ev:'최종 토론회 1차', start:'2026-09-01', end:'2026-09-07', region:'서울', status:'tent', note:'경과보고·우선순위'},
+    {ev:'최종 토론회 2차', start:'2026-09-08', end:'2026-09-14', region:'서울', status:'tent', note:'합의문·정책권고안'},
+  ]},
+  { key:'genDetail', name:'⑧ 분석·보고·백서·정산', events:[
+    {ev:'최종 로데이터·Pre-Post 분석', start:'2026-09-15', end:'2026-09-30', region:'분석', status:'plan', note:'통계·토픽모델링'},
+    {ev:'합의문·정책권고문 정리', start:'2026-09-15', end:'2026-09-30', region:'정책', status:'plan', note:'최종 직후'},
+    {ev:'결과보고회·국민보고대회 지원', start:'2026-09-01', end:'2026-12-15', region:'보고', status:'plan', note:'발표자료·정책 환류'},
+    {ev:'결과보고서·백서·영상물 제작', start:'2026-11-01', end:'2026-12-15', region:'보고', status:'plan', note:'발주처 제출'},
+    {ev:'정산·완료계·대금청구', start:'2026-09-15', end:'2026-10-06', region:'정산', status:'plan', note:'행사 종료 후 D+7~D+21'},
+  ]},
+];
+
+function buildCalendar(){
+  const months = [];
+  let cur = new Date(START);
+  while(cur < END){
+    const mStart = new Date(cur.getFullYear(), cur.getMonth(), 1);
+    const next = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+    const s = mStart < START ? START : mStart;
+    const e = next > END ? END : next;
+    months.push({label:(cur.getMonth()+1)+'월', days:daysFromStart(e)-daysFromStart(s)});
+    cur = next;
+  }
+  const weeks = [];
+  const w = new Date(START);
+  while(w.getDay()!==1) w.setDate(w.getDate()+1);
+  while(w < END){
+    weeks.push(new Date(w));
+    w.setDate(w.getDate()+7);
+  }
+  return {months,weeks,totalW:daysFromStart(END)*DAY};
 }
 
-// Build month + week headers
-const months = [];
-let cur = new Date(START);
-while(cur < END){
-  const mStart = new Date(cur.getFullYear(), cur.getMonth(), 1);
-  const next = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
-  const s = mStart < START ? START : mStart;
-  const e = next > END ? END : next;
-  months.push({label:(cur.getMonth()+1)+'월', days:daysFromStart(e)-daysFromStart(s)});
-  cur = next;
-}
+const calendar = buildCalendar();
 
-// Mondays for week ticks
-const weeks=[];
-let w = new Date(START);
-while(w.getDay()!==1) w.setDate(w.getDate()+1); // first Monday
-while(w < END){ weeks.push(new Date(w)); w.setDate(w.getDate()+7); }
-
-const tbl = document.getElementById('gantt');
-
-// month row
-let mRow = '<tr class="month-row"><th class="corner" rowspan="2">프로젝트 / 행사</th>';
-months.forEach(m=>{ mRow += `<th colspan="1" style="min-width:${m.days*DAY}px;width:${m.days*DAY}px">${m.label}</th>`; });
-mRow += '</tr>';
-
-// week row: single cell spanning full width, ticks drawn absolutely
-let wRow = '<tr class="week-row"><th style="position:relative;padding:0;width:'+totalW+'px;min-width:'+totalW+'px">';
-wRow += '<div style="position:relative;height:18px">';
-weeks.forEach(mon=>{
-  const x = daysFromStart(mon)*DAY;
-  wRow += `<span style="position:absolute;left:${x}px;top:2px;font-size:9px;color:#94a3b8;border-left:1px solid var(--grid);padding-left:2px;height:14px">${mon.getMonth()+1}/${mon.getDate()}</span>`;
-});
-wRow += '</div></th></tr>';
-
-tbl.innerHTML = mRow + wRow;
-
-// helper to build a full-width timeline cell content (grid + monthlines + today)
 function timelineDecor(){
-  let html='';
-  let acc=0;
-  months.forEach((m,i)=>{ if(i>0){ html+=`<span class="monthline" style="left:${acc*DAY}px"></span>`;} acc+=m.days; });
+  let html = '';
+  let acc = 0;
+  calendar.months.forEach((m,i) => {
+    if(i>0) html += `<span class="monthline" style="left:${acc*DAY}px"></span>`;
+    acc += m.days;
+  });
   if(TODAY >= START && TODAY < END){
-    const tx = daysFromStart(TODAY)*DAY;
-    html+=`<span class="todayline" style="left:${tx}px" title="오늘 ${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}"></span>`;
+    html += `<span class="todayline" style="left:${daysFromStart(TODAY)*DAY}px" title="오늘 ${iso(TODAY)}"></span>`;
   }
   return html;
 }
 
-// rows
-projects.forEach(p=>{
-  // group header row
-  const gtr = document.createElement('tr');
-  gtr.className='group';
-  gtr.innerHTML = `<td style="--gc:${colorHex[p.key]}"><span class="gname">${p.name}</span></td>`+
-                  `<td class="timeline-bg" style="position:relative">${timelineDecor()}</td>`;
-  tbl.appendChild(gtr);
+function renderGantt(tableId, projects, leftTitle){
+  const tbl = document.getElementById(tableId);
+  let html = `<tr class="month-row"><th class="corner" rowspan="2">${leftTitle}</th>`;
+  calendar.months.forEach(m => {
+    html += `<th style="min-width:${m.days*DAY}px;width:${m.days*DAY}px">${m.label}</th>`;
+  });
+  html += '</tr>';
+  html += `<tr class="week-row"><th style="position:relative;padding:0;width:${calendar.totalW}px;min-width:${calendar.totalW}px"><div style="position:relative;height:18px">`;
+  calendar.weeks.forEach(mon => {
+    html += `<span style="position:absolute;left:${daysFromStart(mon)*DAY}px;top:2px;font-size:9px;color:#94a3b8;border-left:1px solid var(--grid);padding-left:2px;height:14px">${mon.getMonth()+1}/${mon.getDate()}</span>`;
+  });
+  html += '</div></th></tr>';
+  tbl.innerHTML = html;
 
-  p.events.forEach(e=>{
-    const tr=document.createElement('tr');
-    const tagLabel = e.status==='fix' ? '확정' : e.status==='tent' ? '가안' : '계획';
-    const tag = `<span class="tag ${e.status}">${tagLabel}</span>`;
-    const start = pd(e.start || e.date);
-    const end = pd(e.end || e.date);
-    const dlabel = dateRangeLabel(start, end);
-    const meta = [dlabel, e.region, e.note].filter(Boolean).join(' · ');
-    tr.innerHTML =
-      `<td class="label"><div class="ev">${e.ev}${tag}</div>`+
-      `<div class="meta">${meta}</div></td>`+
-      `<td class="timeline" style="width:${totalW}px;min-width:${totalW}px"></td>`;
-    tbl.appendChild(tr);
+  projects.forEach(p => {
+    const group = document.createElement('tr');
+    group.className = 'group';
+    group.innerHTML = `<td style="--gc:${colorHex[p.key] || colorHex.chapter}"><span class="gname">${p.name}</span></td>`+
+      `<td class="timeline-bg" style="position:relative">${timelineDecor()}</td>`;
+    tbl.appendChild(group);
 
-    const cell = tr.querySelector('.timeline');
-    cell.innerHTML = timelineDecor();
-    const x = daysFromStart(start)*DAY;
-    const barDays = Math.max(1, daysFromStart(end) - daysFromStart(start) + 1);
-    const bar=document.createElement('div');
-    bar.className='bar'+(e.status==='tent'?' tent':'');
-    bar.style.background=colorHex[p.key];
-    bar.style.left = x+'px';
-    bar.style.width = Math.max(26, barDays*DAY)+'px';
-    bar.innerHTML = `<span class="lbl">${dlabel} · ${e.region}</span>`;
-    cell.appendChild(bar);
+    p.events.forEach(e => {
+      const start = pd(e.start || e.date);
+      const end = pd(e.end || e.date);
+      const dlabel = rangeLabel(start,end);
+      const tagText = e.status==='fix' ? '확정' : e.status==='tent' ? '가안' : e.status==='done' ? '완료' : '계획';
+      const meta = [dlabel, e.region, e.note].filter(Boolean).join(' · ');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="label"><div class="ev">${e.ev}<span class="tag ${e.status}">${tagText}</span></div>`+
+        `<div class="meta">${meta}</div></td>`+
+        `<td class="timeline" style="width:${calendar.totalW}px;min-width:${calendar.totalW}px">${timelineDecor()}</td>`;
+      tbl.appendChild(tr);
+
+      const x = daysFromStart(start)*DAY;
+      const barDays = Math.max(1, daysFromStart(end) - daysFromStart(start) + 1);
+      const bar = document.createElement('div');
+      bar.className = `bar ${e.status === 'tent' ? 'tent' : ''} ${e.status === 'done' ? 'done' : ''}`;
+      bar.style.background = colorHex[p.key] || colorHex.chapter;
+      bar.style.left = `${x}px`;
+      bar.style.width = `${Math.max(26, barDays*DAY)}px`;
+      bar.innerHTML = `<span class="lbl">${dlabel} · ${e.region}</span>`;
+      tr.querySelector('.timeline').appendChild(bar);
+    });
+  });
+}
+
+function todayLegend(){
+  return `&nbsp;|&nbsp; <span class="tag fix">확정/픽스</span> <span class="tag tent">가안(빗금)</span> <span class="tag plan">계획</span> <span style="color:#ef4444;font-weight:700;">│</span> 오늘(${TODAY.getMonth()+1}/${TODAY.getDate()})`;
+}
+
+renderGantt('overviewGantt', overviewProjects, '프로젝트 / 행사');
+renderGantt('genderGantt', genderWbs, '챕터 / 세세부 업무');
+document.getElementById('overviewTodayLegend').innerHTML = todayLegend();
+document.getElementById('genderTodayLegend').innerHTML = todayLegend();
+document.getElementById('overviewFootnote').innerHTML =
+  `※ 빨간 세로선 = 오늘(${iso(TODAY)}) 자동 표시. 빗금 처리된 막대 = 가안(일정·장소 변경 가능).<br>`+
+  '※ 통합 일정은 주요 행사 중심입니다. 세대젠더 세세부 업무는 상단의 「세대젠더 상세 WBS」 챕터에서 확인합니다.';
+document.getElementById('genderFootnote').innerHTML =
+  '※ 세대젠더 상세 WBS는 첨부 실행계획서 초안(0.9)의 To-Do 리스트와 WBS를 경상권 7/21 기준 D-day로 환산해 반영했습니다. 수도권 일정은 문서 기준에 따라 경상권 대비 +7일로 잡았습니다.';
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.panel).classList.add('active');
   });
 });
-
-// footnote
-const todayText = `${TODAY.getMonth()+1}/${TODAY.getDate()}`;
-document.getElementById('todayLegend').innerHTML =
-  `&nbsp;|&nbsp; <span class="tag fix">확정/픽스</span> <span class="tag tent">가안(빗금)</span> <span class="tag plan">계획</span> <span style="color:#ef4444;font-weight:700;">│</span> 오늘(${todayText})`;
-document.getElementById('footnote').innerHTML =
-  `※ 빨간 세로선 = 오늘(${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}) 자동 표시. 빗금 처리된 막대 = 가안(일정·장소 변경 가능). 막대 옆 라벨 = 행사일·지역.<br>`+
-  '※ 세대젠더 세부일정은 첨부 실행계획서 초안(0.9)의 세부 추진계획 요약 및 WBS를 반영했습니다. 대토론회 1·2차는 9월로 변경될 수 있음. 경청소통 대토론회 1차는 9/7 또는 9/14 중 택일 예정.';
 </script>
 </body>
 </html>
