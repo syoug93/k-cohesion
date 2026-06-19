@@ -216,13 +216,13 @@ const rangeLabel = (s,e) => s.getTime()===e.getTime() ? dateLabel(s) : `${s.getM
 
 const overviewProjects = [
   { key:'gen', name:'세대젠더', events:[
-    {ev:'분과회의', date:'2026-06-23', region:'미정', status:'fix', note:'15:00'},
     {ev:'세젠 미팅', date:'2026-06-24', region:'미정', status:'fix', note:'10:00-12:00 · Google Calendar'},
     {ev:'권역별 토론 (경상권)', date:'2026-07-21', region:'부산', status:'fix', note:'부산상공회의소 상의홀'},
     {ev:'권역별 토론 (수도권)', date:'2026-07-28', region:'수원', status:'tent', note:'수원컨벤션센터/경기도의회'},
     {ev:'전문가 간담회', date:'2026-08-24', region:'서울(안)', status:'fix', note:'의제 구체화·쟁점 검증·정책 자문'},
-    {ev:'대토론회 1차', start:'2026-09-01', end:'2026-09-07', region:'서울', status:'tent', note:'9월 1주'},
-    {ev:'대토론회 2차', start:'2026-09-08', end:'2026-09-14', region:'서울', status:'tent', note:'9월 2주'},
+    {ev:'국민대토론회 1차', start:'2026-08-24', end:'2026-08-28', region:'미정', status:'tent', note:'Google Calendar'},
+    {ev:'국민대토론회 2차', start:'2026-08-31', end:'2026-09-04', region:'미정', status:'tent', note:'Google Calendar'},
+    {ev:'국민대토론회', date:'2026-09-10', region:'미정', status:'tent', note:'Google Calendar'},
   ]},
   { key:'econ', name:'경제양극화', events:[
     {ev:'이해관계자 토론', date:'2026-06-30', region:'서울', status:'fix', note:'sba 산학센터 대회의실 · 답사완료'},
@@ -303,12 +303,13 @@ const genderWbs = [
     {ev:'수도권 권역토론 개최', start:'2026-07-28', end:'2026-07-28', region:'수원', status:'tent', note:'50~100명'},
     {ev:'수도권 결과 분석·인포그래픽', start:'2026-07-29', end:'2026-07-31', region:'분석', status:'plan', note:'D+1~D+3'},
   ]},
-  { key:'genDetail', name:'⑦ 전문가 간담회·최종 토론', events:[
+  { key:'genDetail', name:'⑦ 전문가 간담회·국민대토론회', events:[
     {ev:'권역 결과 종합·전문가 안건 정리', start:'2026-08-01', end:'2026-08-21', region:'자문', status:'plan', note:'권역 쟁점 종합'},
     {ev:'전문가 간담회', start:'2026-08-24', end:'2026-08-24', region:'서울(안)', status:'fix', note:'쟁점·정책 자문'},
     {ev:'최종 토론 프레임·층화추출 확정', start:'2026-08-25', end:'2026-08-31', region:'최종', status:'plan', note:'전문가 간담회 후속'},
-    {ev:'최종 토론회 1차', start:'2026-09-01', end:'2026-09-07', region:'서울', status:'tent', note:'경과보고·우선순위'},
-    {ev:'최종 토론회 2차', start:'2026-09-08', end:'2026-09-14', region:'서울', status:'tent', note:'합의문·정책권고안'},
+    {ev:'국민대토론회 1차', start:'2026-08-24', end:'2026-08-28', region:'미정', status:'tent', note:'Google Calendar'},
+    {ev:'국민대토론회 2차', start:'2026-08-31', end:'2026-09-04', region:'미정', status:'tent', note:'Google Calendar'},
+    {ev:'국민대토론회', start:'2026-09-10', end:'2026-09-10', region:'미정', status:'tent', note:'Google Calendar'},
   ]},
   { key:'genDetail', name:'⑧ 분석·보고·백서·정산', events:[
     {ev:'최종 로데이터·Pre-Post 분석', start:'2026-09-15', end:'2026-09-30', region:'분석', status:'plan', note:'통계·토픽모델링'},
